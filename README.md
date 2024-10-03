@@ -29,8 +29,11 @@ A simple sentiment analysis API using BERT and DistilBERT models, packaged in a 
     - docker run -p 5000:5000 <name>
     
 
+
+```shell
 dockerized-bert-distilbert/
 ├── app.py
 ├── requirements.txt
 ├── Dockerfile
 └── README.md
+```
