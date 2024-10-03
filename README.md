@@ -25,8 +25,8 @@ A simple sentiment analysis API using BERT and DistilBERT models, packaged in a 
 
 3. **Docker Build and Run**
     - docker login
-    - docker build -t <name> .
-    - docker run -p 5000:5000 <name>
+    - docker build -t <name_you_given> .
+    - docker run -p 5000:5000 <name_you_given>
     
 
 
