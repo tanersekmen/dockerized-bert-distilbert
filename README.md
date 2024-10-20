@@ -13,8 +13,9 @@ A simple sentiment analysis API using BERT and DistilBERT models, packaged in a 
 1. **Clone the Repository**:
 
    ```bash
-   git clone <repository_url>
-   cd <repository_folder>
+   git clone https://github.com/tanersekmen/dockerized-bert-distilbert.git
+   cd dockerized-bert-distilbert
+
    ```
 
 2. **Requirements**
