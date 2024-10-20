@@ -3,7 +3,6 @@ from flask import Flask, request, jsonify
 from transformers import BertTokenizer, BertForSequenceClassification, DistilBertTokenizer, \
     DistilBertForSequenceClassification, Trainer, TrainingArguments
 from sklearn.metrics import f1_score
-from imblearn.over_sampling import SMOTE
 import pandas as pd
 import shap
 import string
@@ -20,9 +19,11 @@ splits = {
     'test': 'split/test-00000-of-00001.parquet'
 }
 
+
 train_df = pd.read_parquet("hf://datasets/dair-ai/emotion/" + splits["train"])
 validation_df = pd.read_parquet("hf://datasets/dair-ai/emotion/" + splits["validation"])
 test_df = pd.read_parquet("hf://datasets/dair-ai/emotion/" + splits["test"])
+
 
 num_labels = len(train_df['label'].unique())
 print(f"Number of unique labels: {num_labels}")
@@ -45,14 +46,8 @@ def preprocess_text(text):
 X_train = train_df['text'].apply(preprocess_text)
 y_train = train_df['label'] - train_df['label'].min()
 
+
 train_encodings = bert_tokenizer(list(X_train), truncation=True, padding=True, max_length=128)
-X_train_vectorized = train_encodings['input_ids']
-
-smote = SMOTE(random_state=42)
-X_resampled, y_resampled = smote.fit_resample(pd.DataFrame(X_train_vectorized), y_train)
-
-X_resampled_texts = bert_tokenizer.batch_decode(X_resampled.values.tolist(), skip_special_tokens=True)
-train_encodings = bert_tokenizer(X_resampled_texts, truncation=True, padding=True, max_length=128)
 
 
 class EmotionDataset(torch.utils.data.Dataset):
@@ -124,8 +119,8 @@ def objective(trial, model_type):
     eval_result = trainer.evaluate()
     return eval_result["eval_f1"]
 
-best_trials = {"bert": None, "distilbert": None}
 
+best_trials = {"bert": None, "distilbert": None}
 
 def run_tuning(model_type):
     study = optuna.create_study(direction="maximize")
@@ -153,6 +148,7 @@ def run_tuning(model_type):
 
 run_tuning("bert")
 run_tuning("distilbert")
+
 
 @app.route('/model', methods=['GET'])
 def get_model_info():
